@@ -1,40 +1,34 @@
-variable "region_name" {
-  description = "AWS region for resource deployment"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "profile_name" {
-  description = "AWS CLI profile for authentication"
+variable "aws_region" {
+  description = "The AWS region to deploy resources"
   type        = string
 }
 
-variable "vpcs" {
-  description = "List of VPCs with their respective CIDR blocks"
-  type = list(object({
-    name       = string
-    cidr_block = string
-  }))
-  default = [
-    { name = "vpc1", cidr_block = "10.0.0.0/16" },
-    { name = "vpc2", cidr_block = "10.1.0.0/16" }
-  ]
+variable "aws_profile" {
+  description = "AWS CLI profile to use"
+  type        = string
 }
 
-variable "num_public_subnets" {
-  description = "Number of public subnets to create per VPC"
-  type        = number
-  default     = 3
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
 }
 
-variable "num_private_subnets" {
-  description = "Number of private subnets to create per VPC"
-  type        = number
-  default     = 3
+variable "project_name" {
+  description = "Project name prefix for resources"
+  type        = string
 }
 
 variable "availability_zones" {
-  description = "List of availability zones for subnet distribution"
+  description = "List of availability zones"
   type        = list(string)
-  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
+}
+
+variable "public_subnet_cidrs" {
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
 }

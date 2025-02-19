@@ -1,82 +1,84 @@
-# Create VPCs dynamically
-resource "aws_vpc" "vpcs" {
-  count      = length(var.vpcs)
-  cidr_block = var.vpcs[count.index].cidr_block
+resource "aws_vpc" "main" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
-    Name = "tf-${var.vpcs[count.index].name}"
+    Name = "${var.project_name}-vpc"
   }
 }
 
 # Create Public Subnets
 resource "aws_subnet" "public_subnets" {
-  count             = length(var.vpcs) * var.num_public_subnets
-  vpc_id            = aws_vpc.vpcs[floor(count.index / var.num_public_subnets)].id
-  cidr_block        = cidrsubnet(var.vpcs[floor(count.index / var.num_public_subnets)].cidr_block, 8, count.index)
-  availability_zone = var.availability_zones[count.index % length(var.availability_zones)]
+  count = length(var.public_subnet_cidrs)
+
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = var.availability_zones[count.index]
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "tf-public-${var.vpcs[floor(count.index / var.num_public_subnets)].name}-${count.index + 1}"
+    Name = "${var.project_name}-public-${count.index}"
   }
 }
 
 # Create Private Subnets
 resource "aws_subnet" "private_subnets" {
-  count             = length(var.vpcs) * var.num_private_subnets
-  vpc_id            = aws_vpc.vpcs[floor(count.index / var.num_private_subnets)].id
-  cidr_block        = cidrsubnet(var.vpcs[floor(count.index / var.num_private_subnets)].cidr_block, 8, count.index + var.num_public_subnets)
-  availability_zone = var.availability_zones[count.index % length(var.availability_zones)]
+  count = length(var.private_subnet_cidrs)
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name = "tf-private-${var.vpcs[floor(count.index / var.num_private_subnets)].name}-${count.index + 1}"
+    Name = "${var.project_name}-private-${count.index}"
   }
 }
 
-# Create Internet Gateway for each VPC
-resource "aws_internet_gateway" "igws" {
-  count  = length(var.vpcs)
-  vpc_id = aws_vpc.vpcs[count.index].id
+# Create Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "tf-igw-${var.vpcs[count.index].name}"
+    Name = "${var.project_name}-igw"
   }
 }
 
-# Create Public Route Tables
-resource "aws_route_table" "public_route_tables" {
-  count  = length(var.vpcs)
-  vpc_id = aws_vpc.vpcs[count.index].id
+# Create Public Route Table
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igws[count.index].id
+    gateway_id = aws_internet_gateway.gw.id
   }
 
   tags = {
-    Name = "tf-public-rt-${var.vpcs[count.index].name}"
+    Name = "${var.project_name}-public-rt"
   }
 }
 
-# Associate Public Subnets with Public Route Tables
-resource "aws_route_table_association" "public_associations" {
-  count          = length(var.vpcs) * var.num_public_subnets
+# Associate Public Subnets with Public Route Table
+resource "aws_route_table_association" "public_assoc" {
+  count = length(var.public_subnet_cidrs)
+
   subnet_id      = aws_subnet.public_subnets[count.index].id
-  route_table_id = aws_route_table.public_route_tables[floor(count.index / var.num_public_subnets)].id
+  route_table_id = aws_route_table.public_rt.id
 }
 
-# Create Private Route Tables
-resource "aws_route_table" "private_route_tables" {
-  count  = length(var.vpcs)
-  vpc_id = aws_vpc.vpcs[count.index].id
+# Create Private Route Table
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "tf-private-rt-${var.vpcs[count.index].name}"
+    Name = "${var.project_name}-private-rt"
   }
 }
 
-# Associate Private Subnets with Private Route Tables
-resource "aws_route_table_association" "private_associations" {
-  count          = length(var.vpcs) * var.num_private_subnets
+# Associate Private Subnets with Private Route Table
+resource "aws_route_table_association" "private_assoc" {
+  count = length(var.private_subnet_cidrs)
+
   subnet_id      = aws_subnet.private_subnets[count.index].id
-  route_table_id = aws_route_table.private_route_tables[floor(count.index / var.num_private_subnets)].id
+  route_table_id = aws_route_table.private_rt.id
 }
