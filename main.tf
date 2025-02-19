@@ -70,7 +70,7 @@ resource "aws_route_table" "private_route_tables" {
   vpc_id = aws_vpc.vpcs[count.index].id
 
   tags = {
-    Name = "tf-private-rt-${var.vpcs[count.index].name}"
+    Name = "tf-private-rt-${var.vpcs[count.index].name}
   }
 }
 
