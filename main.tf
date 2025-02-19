@@ -11,8 +11,8 @@ resource "aws_vpc" "vpcs" {
 # Create Public Subnets
 resource "aws_subnet" "public_subnets" {
   count             = length(var.vpcs) * var.num_public_subnets
-  vpc_id           = aws_vpc.vpcs[floor(count.index / var.num_public_subnets)].id
-  cidr_block       = cidrsubnet(var.vpcs[floor(count.index / var.num_public_subnets)].cidr_block, 8, count.index)
+  vpc_id            = aws_vpc.vpcs[floor(count.index / var.num_public_subnets)].id
+  cidr_block        = cidrsubnet(var.vpcs[floor(count.index / var.num_public_subnets)].cidr_block, 8, count.index)
   availability_zone = var.availability_zones[count.index % length(var.availability_zones)]
 
   tags = {
@@ -23,8 +23,8 @@ resource "aws_subnet" "public_subnets" {
 # Create Private Subnets
 resource "aws_subnet" "private_subnets" {
   count             = length(var.vpcs) * var.num_private_subnets
-  vpc_id           = aws_vpc.vpcs[floor(count.index / var.num_private_subnets)].id
-  cidr_block       = cidrsubnet(var.vpcs[floor(count.index / var.num_private_subnets)].cidr_block, 8, count.index + var.num_public_subnets)
+  vpc_id            = aws_vpc.vpcs[floor(count.index / var.num_private_subnets)].id
+  cidr_block        = cidrsubnet(var.vpcs[floor(count.index / var.num_private_subnets)].cidr_block, 8, count.index + var.num_public_subnets)
   availability_zone = var.availability_zones[count.index % length(var.availability_zones)]
 
   tags = {
