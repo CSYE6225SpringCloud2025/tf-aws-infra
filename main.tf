@@ -10,7 +10,7 @@ resource "aws_vpc" "main" {
 
 # Create Public Subnets
 resource "aws_subnet" "public_subnets" {
-  count = length(var.public_subnet_cidrs)
+     count = length(var.public_subnet_cidrs)
 
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidrs[count.index]
