@@ -82,3 +82,57 @@ resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_rt.id
 }
+
+# Create Application Security Group
+resource "aws_security_group" "application_security_group" {
+  name        = "${var.project_name}-app-sg"
+  description = "Allow SSH, HTTP, HTTPS, and application port traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = var.application_port
+    to_port     = var.application_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create EC2 instance
+resource "aws_instance" "web_application" {
+  ami                         = var.custom_ami_id
+  instance_type               = var.instance_type
+  availability_zone           = var.availability_zones[0]
+  subnet_id                   = aws_subnet.public_subnets[0].id
+  vpc_security_group_ids      = [aws_security_group.application_security_group.id]
+  associate_public_ip_address = true
+  root_block_device {
+    volume_size           = 25
+    volume_type           = "gp2"
+    delete_on_termination = true
+  }
+  tags = {
+    Name = "${var.project_name}-web-app-instance"
+  }
+}
+
