@@ -27,3 +27,8 @@ output "private_route_table_id" {
   description = "The ID of the private route table"
   value       = aws_route_table.private_rt.id
 }
+
+output "ec2_instance_id" {
+  description = "The ID of the EC2 instance"
+  value       = aws_instance.web_application.id
+}
