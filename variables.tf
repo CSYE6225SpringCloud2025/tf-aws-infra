@@ -47,3 +47,69 @@ variable "application_port" {
   description = "Port on which the application runs"
   type        = number
 }
+
+variable "db_port" {
+  description = "Port for the database"
+  type        = number
+  default     = 3306
+}
+
+variable "db_engine" {
+  description = "Database engine (e.g., mysql, postgres)"
+  type        = string
+  default     = "mysql"
+}
+
+variable "db_engine_version" {
+  description = "Database engine version"
+  type        = string
+  default     = "5.7"
+}
+
+variable "db_instance_class" {
+  description = "Database instance class"
+  type        = string
+  default     = "db.t2.micro"
+}
+
+variable "db_allocated_storage" {
+  description = "Allocated storage for the database (in GB)"
+  type        = number
+  default     = 20
+}
+
+variable "db_storage_type" {
+  description = "Database storage type"
+  type        = string
+  default     = "gp2"
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "db_username" {
+  description = "Database master username"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "db_password" {
+  description = "Database master password"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_instance_identifier" {
+  description = "Database instance identifier"
+  type        = string
+  default     = "csye6225"
+}
+
+variable "db_parameter_group_family" {
+  description = "Database parameter group family"
+  type        = string
+  default     = "mysql5.7"
+}
