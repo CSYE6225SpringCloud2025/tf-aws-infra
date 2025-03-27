@@ -183,6 +183,30 @@ resource "aws_iam_role_policy" "s3_policy" {
   })
 }
 
+# CloudWatch IAM Policy
+resource "aws_iam_role_policy" "cloudwatch_policy" {
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "cloudwatch:PutMetricData",
+          "ec2:DescribeTags",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams",
+          "logs:DescribeLogGroups",
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # IAM Instance Profile
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.project_name}-ec2-profile"
@@ -283,6 +307,14 @@ resource "aws_instance" "web_application" {
               echo "DB_NAME=${var.db_name}" >> /opt/webapp/.env
               echo "DB_DIALECT=mysql" >> /opt/webapp/.env
               echo "S3_BUCKET_NAME=${aws_s3_bucket.web_app_bucket.bucket}" >> /opt/webapp/.env
+
+                # Configure CloudWatch Agent
+              sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+                -a fetch-config \
+                -m ec2 \
+                -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
+                -s
+                
               sudo chown -R csye6225:csye6225 /opt/webapp
               sudo chmod 600 /opt/webapp/.env
               sudo systemctl restart webapp.service
