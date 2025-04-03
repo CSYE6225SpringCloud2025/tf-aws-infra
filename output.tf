@@ -28,10 +28,10 @@ output "private_route_table_id" {
   value       = aws_route_table.private_rt.id
 }
 
-output "ec2_instance_id" {
-  description = "The ID of the EC2 instance"
-  value       = aws_instance.web_application.id
-}
+# output "ec2_instance_id" {
+#   description = "The ID of the EC2 instance"
+#   value       = aws_instance.web_application.id
+# }
 
 output "rds_instance_endpoint" {
   description = "The endpoint of the RDS instance"
@@ -41,4 +41,25 @@ output "rds_instance_endpoint" {
 output "s3_bucket_name" {
   description = "The name of the S3 bucket"
   value       = aws_s3_bucket.web_app_bucket.bucket
+}
+
+# New outputs for load balancer and auto-scaling
+output "load_balancer_dns_name" {
+  description = "The DNS name of the load balancer"
+  value       = aws_lb.web_app_lb.dns_name
+}
+
+output "load_balancer_zone_id" {
+  description = "The zone ID of the load balancer"
+  value       = aws_lb.web_app_lb.zone_id
+}
+
+output "auto_scaling_group_name" {
+  description = "The name of the auto scaling group"
+  value       = aws_autoscaling_group.web_app_asg.name
+}
+
+output "target_group_arn" {
+  description = "The ARN of the target group"
+  value       = aws_lb_target_group.web_app_tg.arn
 }
