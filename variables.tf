@@ -132,10 +132,10 @@ variable "key_name" {
 
 variable "environment" {
   description = "Environment (dev or demo)"
-  type        =  string
+  type        = string
 }
 
 variable "zone_id" {
   description = "Hosted zone ID"
-  type        =  string
+  type        = string
 }

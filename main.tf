@@ -168,10 +168,10 @@ resource "aws_security_group" "application_security_group" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
     #security_groups = [aws_security_group.load_balancer_security_group.id]
   }
 
@@ -382,7 +382,7 @@ resource "aws_db_instance" "web_app_db" {
 #                 -m ec2 \
 #                 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
 #                 -s
-                
+
 #               sudo chown -R csye6225:csye6225 /opt/webapp
 #               sudo chmod 600 /opt/webapp/.env
 #               sudo systemctl restart webapp.service
@@ -506,14 +506,14 @@ resource "aws_lb_listener" "web_app_listener" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "web_app_asg" {
-  name_prefix          = "${var.project_name}-asg-"
-  vpc_zone_identifier  = aws_subnet.public_subnets[*].id
-  desired_capacity     = 3
-  min_size             = 3
-  max_size             = 5
-  health_check_type    = "ELB"
+  name_prefix               = "${var.project_name}-asg-"
+  vpc_zone_identifier       = aws_subnet.public_subnets[*].id
+  desired_capacity          = 3
+  min_size                  = 3
+  max_size                  = 5
+  health_check_type         = "ELB"
   health_check_grace_period = 300
-  force_delete         = true
+  force_delete              = true
 
   launch_template {
     id      = aws_launch_template.web_app_launch_template.id
@@ -552,12 +552,12 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "CPUUtilization"
-  namespace          = "AWS/EC2"
-  period             = 60
-  statistic          = "Average"
-  threshold          = 12
-  alarm_description  = "Scale up when CPU > 12% for 1 minutes"
-  alarm_actions      = [aws_autoscaling_policy.scale_up.arn]
+  namespace           = "AWS/EC2"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 12
+  alarm_description   = "Scale up when CPU > 12% for 1 minutes"
+  alarm_actions       = [aws_autoscaling_policy.scale_up.arn]
 
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.web_app_asg.name
@@ -569,12 +569,12 @@ resource "aws_cloudwatch_metric_alarm" "low_cpu" {
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = 1
   metric_name         = "CPUUtilization"
-  namespace          = "AWS/EC2"
-  period             = 60
-  statistic          = "Average"
-  threshold          = 10
-  alarm_description  = "Scale down when CPU < 3% for 2 minutes"
-  alarm_actions      = [aws_autoscaling_policy.scale_down.arn]
+  namespace           = "AWS/EC2"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 10
+  alarm_description   = "Scale down when CPU < 3% for 2 minutes"
+  alarm_actions       = [aws_autoscaling_policy.scale_down.arn]
 
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.web_app_asg.name
