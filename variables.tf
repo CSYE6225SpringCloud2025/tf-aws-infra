@@ -113,3 +113,29 @@ variable "db_parameter_group_family" {
   type        = string
   default     = "mysql5.7"
 }
+
+# New variables for auto-scaling and load balancer
+variable "key_name" {
+  description = "Name of the EC2 key pair"
+  type        = string
+}
+
+# variable "route53_zone_id" {
+#   description = "Route53 hosted zone ID"
+#   type        = string
+# }
+
+# variable "domain_name" {
+#   description = "Domain name for the application"
+#   type        = string
+# }
+
+variable "environment" {
+  description = "Environment (dev or demo)"
+  type        = string
+}
+
+variable "zone_id" {
+  description = "Hosted zone ID"
+  type        = string
+}
