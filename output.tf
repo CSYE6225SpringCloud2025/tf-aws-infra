@@ -63,3 +63,23 @@ output "target_group_arn" {
   description = "The ARN of the target group"
   value       = aws_lb_target_group.web_app_tg.arn
 }
+
+output "launch_template_id" {
+  description = "The ID of the launch template"
+  value       = aws_launch_template.web_app_launch_template.id
+}
+
+output "kms_key_arns" {
+  description = "The ARNs of the KMS keys"
+  value = {
+    ec2     = aws_kms_key.ec2_key.arn
+    rds     = aws_kms_key.rds_key.arn
+    s3      = aws_kms_key.s3_key.arn
+    secrets = aws_kms_key.secrets_key.arn
+  }
+}
+
+output "db_secret_arn" {
+  description = "The ARN of the database secret"
+  value       = aws_secretsmanager_secret.db_password.arn
+}
