@@ -96,11 +96,11 @@ variable "db_username" {
   default     = "csye6225"
 }
 
-variable "db_password" {
-  description = "Database master password"
-  type        = string
-  sensitive   = true
-}
+# variable "db_password" {
+#   description = "Database master password"
+#   type        = string
+#   sensitive   = true
+# }
 
 variable "db_instance_identifier" {
   description = "Database instance identifier"
@@ -138,4 +138,36 @@ variable "environment" {
 variable "zone_id" {
   description = "Hosted zone ID"
   type        = string
+}
+
+variable "kms_admin_user" {
+  description = "IAM user with KMS admin permissions"
+  type        = string
+  default     = "kms-admin"
+}
+
+# Certificate variables for DEMO environment
+variable "certificate_body" {
+  description = "PEM-encoded certificate body for DEMO environment"
+  type        = string
+  default     = ""
+}
+
+variable "certificate_private_key" {
+  description = "PEM-encoded private key for DEMO environment"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "certificate_chain" {
+  description = "PEM-encoded certificate chain for DEMO environment"
+  type        = string
+  default     = ""
+}
+
+variable "arn_certificate" {
+  description = "ARN of the imported SSL certificate for Dev or Demo environment"
+  type        = string
+  default     = ""
 }
